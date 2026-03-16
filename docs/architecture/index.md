@@ -8,9 +8,7 @@ The services run in their own network defined by a [network unit](https://www.fr
 
 ## Overview
 
-```
-[insert-architecture-diagram]
-```
+![Insights Architecture](./iop-architecture.svg)
 
 ## Quadlets and Configuration
 
