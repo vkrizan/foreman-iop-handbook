@@ -6,7 +6,7 @@ The API gateway for the Insights services is provided by the [IoP Gateway](https
 
 ## IoP Gateway
 
-IoP Gateway is an nginx-based service with custom routing to Insights services and identity handling. Within the Foreman installation, it listens locally on port `24443`. Its secondary purpose is to be registered as a Foreman Smart Proxy to facilitate Insights-to-Foreman communication. See also \[Smart-Proxy\].
+IoP Gateway is an nginx-based service with custom routing to Insights services and identity handling. Within the Foreman installation, it listens locally on port `24443`. Its secondary purpose is to be registered as a Foreman Smart Proxy to facilitate Insights-to-Foreman communication. See also [Smart Proxy](#smart-proxy).
 
 HTTPS and authentication are handled through mTLS provided by Foreman (during installation). The certificates are supplied via secrets. The certificate secrets follow this naming convention:
 
@@ -15,6 +15,30 @@ HTTPS and authentication are handled through mTLS provided by Foreman (during in
 * `iop-core-gateway-server-ca-cert`
 
 Routing to the services is done through a combination of a resolver, nginx variables, and known container hostnames. It uses Podman's resolver, which is available at the first address on Podman's network (default `10.130.0.1`) and is set via the [`resolver`](https://nginx.org/en/docs/http/ngx_http_core_module.html#resolver) directive. Container hostnames are set via nginx variables and then used in [`proxy_pass`](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass) directives on defined locations to leverage name resolution.
+
+The gateway establishes path-based proxying to the Insights services following the pattern:
+
+```
+/api/<app_name>/
+```
+
+For example:
+
+```
+/api/ingress/* -> http://iop-core-ingress:8080
+/api/insights/* -> http://iop-service-advisor-backend-api:8000
+/api/vulnerability/* -> http://iop-service-vuln-manager:8000
+/api/inventory/* -> http://iop-core-host-inventory-api:8081
+```
+
+:::warning
+The HTTP ports vary between the Insights services.
+:::
+
+Because of legacy behavior of the Insights client, the following paths must be handled correctly:
+* `/r/insights/platform/<app_name>/*`
+* `/r/insights/*`
+* `/r/api/<app_name>/*`
 
 ## Integration with Foreman
 
