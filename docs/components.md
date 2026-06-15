@@ -63,28 +63,28 @@ Containers are categorized into types:
 The list might vary depending on the version of Insights on Premises deployment and could change at any point of development.
 :::
 
-| Container | Component | Application | Type |
-|-----------|-----------|-------------|------|
-| `iop-core-engine` | insights-engine | Advisor | Processor |
-| `iop-core-gateway` | iop-gateway | Core | *API Gateway* |
-| `iop-core-host-inventory` | host-inventory | Core | Processor |
-| `iop-core-host-inventory-api` | host-inventory | Core | API Backend |
-| `iop-core-host-inventory-cleanup` | host-inventory | Core | Cronjob |
-| `iop-core-host-inventory-migrate` | host-inventory | Core | One-off |
-| `iop-core-ingress` | ingress | Core | API Backend |
-| `iop-core-kafka` | kafka | Core | *Kafka* |
-| `iop-core-puptoo` | puptoo | Core | Processor |
-| `iop-core-yuptoo` | yuptoo | Core | Processor |
-| `iop-service-advisor-backend-api` | advisor-backend | Advisor | API Backend |
-| `iop-service-advisor-backend-service` | advisor-backend | Advisor | Processor |
-| `iop-service-remediations-api` | remediations | Core | API Backend |
-| `iop-service-vmaas-reposcan` | vmaas | Vulnerability | Processor & API Backend (internal) |
-| `iop-service-vmaas-webapp-go` | vmaas | Vulnerability | API Backend (internal) |
-| `iop-service-vuln-dbupgrade` | vulnerability-engine | Vulnerability | One-off |
-| `iop-service-vuln-evaluator-recalc` | vulnerability-engine | Vulnerability | Processor |
-| `iop-service-vuln-evaluator-upload` | vulnerability-engine | Vulnerability | Processor |
-| `iop-service-vuln-grouper` | vulnerability-engine | Vulnerability | Processor |
-| `iop-service-vuln-listener` | vulnerability-engine | Vulnerability | Processor |
-| `iop-service-vuln-manager` | vulnerability-engine | Vulnerability | API Backend |
-| `iop-service-vuln-taskomatic` | vulnerability-engine | Vulnerability | Processor |
-| `iop-service-vuln-vmaas-sync` | vulnerability-engine | Vulnerability | Cronjob |
+| Container | Component | Application | Type | Port |
+|-----------|-----------|-------------|------|------|
+| `iop-core-engine` | insights-engine | Advisor | Processor | - |
+| `iop-core-gateway` | iop-gateway | Core | *API Gateway* | 127.0.0.1:24443 |
+| `iop-core-host-inventory` | host-inventory | Core | Processor | - |
+| `iop-core-host-inventory-api` | host-inventory | Core | API Backend | 8081 |
+| `iop-core-host-inventory-cleanup` | host-inventory | Core | Cronjob | - |
+| `iop-core-host-inventory-migrate` | host-inventory | Core | One-off | - |
+| `iop-core-ingress` | ingress | Core | API Backend | 8080 |
+| `iop-core-kafka` | kafka | Core | *Kafka* | 9092 |
+| `iop-core-puptoo` | puptoo | Core | Processor | - |
+| `iop-core-yuptoo` | yuptoo | Core | Processor | - |
+| `iop-service-advisor-backend-api` | advisor-backend | Advisor | API Backend | 8000 |
+| `iop-service-advisor-backend-service` | advisor-backend | Advisor | Processor | - |
+| `iop-service-remediations-api` | remediations | Core | API Backend | 3000 |
+| `iop-service-vmaas-reposcan` | vmaas | Vulnerability | Processor & API Backend (internal) | - |
+| `iop-service-vmaas-webapp-go` | vmaas | Vulnerability | API Backend (internal) | - |
+| `iop-service-vuln-dbupgrade` | vulnerability-engine | Vulnerability | One-off | - |
+| `iop-service-vuln-evaluator-recalc` | vulnerability-engine | Vulnerability | Processor | - |
+| `iop-service-vuln-evaluator-upload` | vulnerability-engine | Vulnerability | Processor | - |
+| `iop-service-vuln-grouper` | vulnerability-engine | Vulnerability | Processor | - |
+| `iop-service-vuln-listener` | vulnerability-engine | Vulnerability | Processor | - |
+| `iop-service-vuln-manager` | vulnerability-engine | Vulnerability | API Backend | 8443 |
+| `iop-service-vuln-taskomatic` | vulnerability-engine | Vulnerability | Processor | - |
+| `iop-service-vuln-vmaas-sync` | vulnerability-engine | Vulnerability | Cronjob | - |
