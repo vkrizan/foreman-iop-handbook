@@ -6,7 +6,63 @@ The upstream Insights container images are built by GitHub Actions in their resp
 
 ## Overview
 
-![Insights Architecture](./iop-architecture.svg)
+```mermaid
+graph TB
+    subgraph Host["Host System"]
+        Foreman["Foreman<br/>(foreman_rh_cloud)"]
+        Apache["Apache httpd"]
+        PG[(PostgreSQL)]
+
+        subgraph Network["iop-core-network (10.130.0.0/24)"]
+            Kafka[Kafka]
+
+            subgraph Core["Core Services"]
+                Ingress[Ingress]
+                Puptoo[Puptoo]
+                Yuptoo[Yuptoo]
+                Engine[Engine]
+            end
+
+            Gateway["Gateway<br/>:24443"]
+
+            subgraph Services["Application Services"]
+                Inventory["Inventory API<br/>:8081"]
+                Advisor["Advisor API<br/>:8000"]
+                Remediation["Remediation API<br/>:3000"]
+                VMAAS["VMAAS<br/>(reposcan + webapp)"]
+                Vuln["Vulnerability<br/>(8 containers)"]
+            end
+        end
+
+        subgraph Frontends["Frontend Assets (/var/www/iop)"]
+            AdvisorFE[Advisor Frontend]
+            VulnFE[Vulnerability Frontend]
+        end
+    end
+
+    Foreman -- "smart proxy<br/>relay" --> Gateway
+    Gateway --> Kafka
+    Apache -- "Alias" --> Frontends
+
+    Ingress --> Kafka
+    Puptoo --> Kafka
+    Yuptoo --> Kafka
+    Engine --> Kafka
+
+    Inventory --> Kafka
+    Inventory --> PG
+    Advisor --> Kafka
+    Advisor --> Inventory
+    Advisor -. "FDW" .-> PG
+    Remediation --> Advisor
+    Remediation --> Inventory
+    VMAAS --> PG
+    VMAAS --> Gateway
+    Vuln --> Kafka
+    Vuln --> Inventory
+    Vuln --> VMAAS
+    Vuln -. "FDW" .-> PG
+```
 
 Insights on Premises services are deployed as containers on the same machine as Foreman.
 Each service (a Deployment on in the Kubernetes environment) is currently limited to one container.
