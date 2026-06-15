@@ -24,13 +24,12 @@ The assets are available inside the frontend containers at the path:
 
 ## Distribution and Serving
 
-The frontend assets are distributed as content-only containers. Assets from these containers are copied to disk by Foreman Installer to the path:
+The frontend assets are distributed as content-only containers. Assets from these containers are copied to disk. The asset path depends on the deployment tool:
 
-```
-/var/lib/foreman/public/assets/apps/<app_name>
-```
+- **foremanctl**: `/var/www/iop/assets/apps/<app_name>`
+- **puppet-iop** (Foreman Installer): `/var/lib/foreman/public/assets/apps/<app_name>`
 
-The frontend artifacts on a Foreman instance are served as static files by [Apache httpd](https://httpd.apache.org) at the following location.
+The frontend artifacts on a Foreman instance are served as static files by [Apache httpd](https://httpd.apache.org) via `Alias` directives at the following location.
 
 ```
 /assets/apps/<app_name>
