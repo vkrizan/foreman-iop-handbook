@@ -138,11 +138,25 @@ Insights services use PostgreSQL databases for storing permanent data. On premis
 
 The connection to the database instance is handled by Unix sockets mounted into the containers as volumes. Note that the services should also be able to handle TCP connections. Each service that requires a database has it provisioned by Foreman Installer (via [puppet-iop](https://github.com/theforeman/puppet-iop/tree/master/manifests)). User and password are provided to the service containers via environment variables through Podman secrets, including the connection information (e.g. socket or hostname). The database user has ownership of its database and does not have the `SUPERUSER` role.
 
-Syndication of host data from Host Inventory is provided through PostgreSQL’s [Foreign Data Wrapper](https://www.postgresql.org/docs/current/postgres-fdw.html) (FDW; previously dblink). Services that require host data have an inventory.hosts table linked to the corresponding table or view in Host Inventory. The FDW link is provisioned by the puppet-iop [`postgresql_fdw` module](https://github.com/theforeman/puppet-iop/blob/master/manifests/postgresql_fdw.pp).
+Syndication of host data from Host Inventory is provided through PostgreSQL’s [Foreign Data Wrapper](https://www.postgresql.org/docs/current/postgres-fdw.html) (FDW; previously dblink). Services that require host data have an inventory.hosts table linked to the corresponding table or view in Host Inventory. The FDW link is provisioned by [puppet-iop](https://github.com/theforeman/puppet-iop/blob/master/manifests/postgresql_fdw.pp) or [foremanctl](https://github.com/theforeman/foremanctl).
 
 :::note
 The FDW setup might be replaced by an event-based system that uses Kafka messages to store service-specific host data.
 :::
+
+### Database Topology
+
+IoP creates five PostgreSQL databases. Containers access the database instance via `host.containers.internal:5432`.
+
+| Database | User | Used By |
+|----------|------|---------|
+| `inventory_db` | `inventory_admin` | host-inventory |
+| `advisor_db` | `advisor_user` | advisor-backend |
+| `remediations_db` | `remediations_user` | remediations |
+| `vmaas_db` | `vmaas_admin` | vmaas |
+| `vulnerability_db` | `vulnerability_admin` | vulnerability-engine |
+
+Advisor and Vulnerability services additionally query the `inventory_db` through FDW to access host data directly.
 
 ## Host Inventory
 
