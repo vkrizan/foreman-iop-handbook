@@ -5,3 +5,4 @@ Insights services originate from a cloud-hosted environment where they run on Ku
 This section documents those requirements.
 
 - [Considerations](./considerations.md) — constraints and requirements for services operating in IoP
+- [VMaaS](./vmaas.md) — vulnerability metadata sync pipeline (reposync and CVE map)
