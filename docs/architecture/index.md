@@ -69,7 +69,7 @@ Each service (a Deployment on in the Kubernetes environment) is currently limite
 The services run in their own network defined by a [network unit](https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html) (see also [podman network](https://docs.podman.io/en/latest/markdown/podman-network.1.html)).
 The routing to the services is facilitated by a custom IoP Gateway, which acts as an API gateway and proxy to Foreman’s APIs.
 Requests to Insights services are proxied with Foreman's [RH Cloud plugin](https://github.com/theforeman/foreman_rh_cloud/).
-See [Gateway](./gateway.md) for more details.
+See [Gateway](./gateway.md) for more details. For the vulnerability metadata sync pipeline, see [VMaaS](../service_specifics/vmaas.md).
 
 :::note
 The limitation to one container per service could be improved in the future for better scalability and performance.
