@@ -24,15 +24,37 @@ For example, data collected by Insights Core or the Insights Client uses this MI
 application/vnd.redhat.archive.filename+tgz
 ```
 
-The on-premises deployment of the Ingress service uses a disk volume to store archives temporarily. The temporary directory is mounted as a volume, typically from `/var/tmp/insights-archives`. How long archives remain on disk is controlled by a [tempfiles.d](https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html) systemd configuration.
-
-Ingress provides an API to download archives internally for services that process them further. Once an archive is received and stored, it is announced on a Kafka topic:
+Once an archive is received and stored, it is announced on a Kafka topic:
 
 ```
 platform.upload.announce
 ```
 
 The event message includes the service type (based on the archive MIME type), host and organization information, and an internal URL for downloading the archive. See the README of [insights-ingress-go](https://github.com/RedHatInsights/insights-ingress-go) on GitHub.
+
+### Archive Storage
+
+In cloud deployments, Ingress stages archives to S3-compatible object storage and shares presigned URLs with downstream services. On premises, S3 is not available — Ingress uses local filesystem storage instead (see [Minimal Dependencies](../service_specifics/considerations.md#minimal-dependencies)).
+
+Archives are written as flat files to a configured directory, typically `/var/tmp/insights-archives`. Each file is named after the request ID (from the `x-rh-insights-request-id` header) with a `.tar.gz` extension:
+
+```
+/var/tmp/insights-archives/<request-id>.tar.gz
+```
+
+When filesystem storage is active, Ingress exposes an additional HTTP endpoint at `/download/{requestID}` that serves stored archives. The download URL published in the Kafka announcement points to this endpoint, so downstream processors ([Puptoo](#upload-processors), [Yuptoo](#upload-processors)) fetch archives directly from Ingress over HTTP.
+
+Cleanup of stored archives is handled by systemd's `tmpfiles.d` mechanism (see [Temporary Data Volume Pruning](../service_specifics/considerations.md#temporary-data-volume-pruning)).
+
+### Configuration
+
+The storage mode and related settings are controlled by environment variables (prefixed with `INGRESS_`):
+
+| Variable | Description |
+|----------|-------------|
+| `INGRESS_STAGERIMPLEMENTATION` | Storage backend: `filebased` for on-premises, `s3` for cloud |
+| `INGRESS_STORAGEFILESYSTEMPATH` | Directory path for archive storage (required when using `filebased`) |
+| `INGRESS_SERVICEBASEURL` | Base URL used to construct download URLs for the Kafka announcement |
 
 ## Upload Processors
 
