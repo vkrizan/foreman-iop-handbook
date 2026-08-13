@@ -139,6 +139,58 @@ The import process checks the `Last-Modified` header against the last known time
 
 The CVE map URL is configured via the `REDHAT_CVEMAP_URL` environment variable.
 
+## VEX Downloader
+
+Vulnerability Exploitability eXchange (VEX) provides machine-readable advisories stating whether a specific product or component is affected by a CVE. VMAAS needs this data to support evaluation of CVEs without errata.
+
+### Download to Host
+
+A systemd timer (`iop-vex-download.timer`) runs every 24 hours (configurable via `iop_vex_downloader_timer_interval`) and executes a download script that fetches `vex-latest.tar.zst` from Red Hat's security data from this URL: 
+
+```
+https://security.access.redhat.com/data/csaf/v2/vex/
+```
+
+It first read this file for actual tarball's name:
+
+```
+https://security.access.redhat.com/data/csaf/v2/vex/archive_latest.txt
+```
+
+The script also checks whether this file was modified since the modification time of the current VEX data on the disk. If the file wasn't modified the download isn't triggered. If the file was modified or the data doesn't exist yet the download is triggered. An example tarball name is `csaf_vex_2026-08-09.tar.zst`. The file is placed at a location served by Apache httpd:
+
+```
+/var/www/html/pub/iop/data/csaf/v2/vex/vex-latest.tar.zst
+```
+
+The filename is not changing. Thus there is also file which contains this static filename:
+
+```
+/var/www/html/pub/iop/data/csaf/v2/vex/archive_latest.txt
+```
+
+The VMAAS service first reads the filename from `archive_latest.txt` and then it uses this name to access the VEX data.
+
+The timer, service and path units are managed by foremanctl [`iop_vex_downloader`](https://github.com/theforeman/foremanctl/tree/master/src/roles/iop_vex_downloader) role.
+
+The foremanctl role provides the following configuration variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `iop_vex_downloader_base_url` | `https://security.access.redhat.com/data/csaf/v2/vex/` | Source URL for the VEX data |
+| `iop_vex_downloader_output_dir` | `/var/www/html/pub/iop/data/csaf/v2/vex/` | Output directory for the VEX data |
+| `iop_vex_downloader_timer_interval` | `1d` | Interval between downloads |
+
+#### Disconnected Environments
+
+In disconnected (air-gapped) environments, `vex-latest.tar.zst` must be copied manually to:
+
+```
+/var/lib/foreman/vex-latest.tar.zst
+```
+
+A systemd path unit (`iop-vex-download.path`) watches this file for changes. When the file is modified, it triggers the download service, which copies the file to the public location.
+
 ## Configuration
 
 ### Reposcan Environment Variables
@@ -150,13 +202,14 @@ The CVE map URL is configured via the `REDHAT_CVEMAP_URL` environment variable.
 | `SYNC_REPOS`            | `yes`                                                          | Enable repository metadata sync                     |
 | `SYNC_CVE_MAP`          | `yes`                                                          | Enable CVE map sync                                 |
 | `SYNC_CPE`              | `no`                                                           | Enable CPE dictionary sync                          |
-| `SYNC_CSAF`             | `no`                                                           | Enable CSAF advisory sync                           |
+| `SYNC_CSAF`             | `yes`                                                           | Enable CSAF advisory sync                           |
 | `SYNC_RELEASES`         | `no`                                                           | Enable RHEL release version sync                    |
 | `SYNC_RELEASE_GRAPH`    | `no`                                                           | Enable RHEL release graph sync                      |
 | `KATELLO_URL`           | `http://iop-core-gateway:9090`                                 | Katello API base URL                                |
 | `REDHAT_CVEMAP_URL`     | `http://iop-core-gateway:9090/pub/iop/data/meta/v1/cvemap.xml` | CVE map download URL                                |
 | `PROMETHEUS_PORT`       | `8085`                                                         | Prometheus metrics port                             |
-
+| `CSAF_VEX_BASE_URL` | `http://iop-core-gateway:9090/pub/iop/data/csaf/v2/vex/` | VEX data download URL |
+| `CSAF_VEX_INDEX_CSV_ENABLED` | `no` | Usage of Index for VEX data |
 
 ### Webapp-Go Environment Variables
 
