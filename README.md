@@ -7,5 +7,6 @@ Available at **[https://vkrizan.github.io/foreman-iop-handbook/](https://vkrizan
 ## Quick Start
 
 ```
+npm install
 npm run dev
 ```
