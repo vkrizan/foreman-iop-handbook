@@ -141,7 +141,7 @@ The CVE map URL is configured via the `REDHAT_CVEMAP_URL` environment variable.
 
 ## VEX Downloader
 
-Vulnerability Exploitability eXchange (VEX) provides machine-readable advisories stating whether a specific product or component is affected by a CVE.
+Vulnerability Exploitability eXchange (VEX) provides machine-readable advisories stating whether a specific product or component is affected by a CVE. VMAAS needs this data to support evaluation of CVEs without errata.
 
 ### Download to Host
 
