@@ -6,3 +6,4 @@ This section documents those requirements.
 
 - [Considerations](./considerations.md) — constraints and requirements for services operating in IoP
 - [VMaaS](./vmaas.md) — vulnerability metadata sync pipeline (reposync and CVE map)
+- [Inventory](./inventory.md) — Host Inventory
