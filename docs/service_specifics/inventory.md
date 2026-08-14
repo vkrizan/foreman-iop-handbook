@@ -2,20 +2,6 @@
 
 [Host Based Inventory (HBI)](https://github.com/RedHatInsights/insights-host-inventory) is the source of truth for system, or host, information across the entire platform. HBI consumes information about hosts from reporters, like insights-client, RHSM or Satellite.
 
-It consists of two containers:
-
-- `iop-core-host-inventory`,
-- `iop-core-host-inventory-api`.
-
-It consists of four systemd units:
-
-- `iop-core-host-inventory-api`,
-- `iop-core-host-inventory-cleanup`,
-- `iop-core-host-inventory`,
-- `iop-core-host-inventory-migrate`.
-
-The systemd unit files are stored under `/etc/containers/systemd/`.
-
 The documentation for HBI could be found [here](https://github.com/RedHatInsights/insights-host-inventory/blob/master/docs/index.md).
 
 ## FDW
@@ -48,4 +34,4 @@ Note: `system_profile` is json blob column which consists of multiple attributes
 
 ## Host Culling
 
-The Host Culling is cloud feature which should be turned off in On-Premises environment. It is turned off using variable `DISABLE_HOST_CULLING=true` which is set for both containers.
+The Host Culling is cloud feature which should be turned off in On-Premises environment. It is turned off using variable `DISABLE_HOST_CULLING=true` which is set on all Inventory service containers.
